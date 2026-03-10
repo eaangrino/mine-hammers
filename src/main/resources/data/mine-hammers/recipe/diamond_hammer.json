@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond_block"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "s": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "DdD",
+    " s ",
+    " s "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mine-hammers:diamond_hammer"
+  }
+}

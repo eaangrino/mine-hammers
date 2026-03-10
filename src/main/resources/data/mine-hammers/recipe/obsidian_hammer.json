@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": {
+      "item": "minecraft:obsidian"
+    },
+    "s": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "DsD",
+    " s "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mine-hammers:obsidian_hammer"
+  }
+}

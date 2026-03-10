@@ -1,0 +1,61 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mine-hammers:diamond_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:emerald_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:ender_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:magma_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:golden_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:iron_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:lapis_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:netherite_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:obsidian_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:prismarine_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:quartz_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:slime_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:stone_hammer",
+      "required": false
+    },
+    {
+      "id": "mine-hammers:wooden_hammer",
+      "required": false
+    }
+  ]
+}

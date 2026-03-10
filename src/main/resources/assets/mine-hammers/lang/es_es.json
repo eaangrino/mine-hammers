@@ -1,0 +1,16 @@
+{
+  "item.mine-hammers.wooden_hammer": "Martillo de Madera",
+  "item.mine-hammers.stone_hammer": "Martillo de Piedra",
+  "item.mine-hammers.iron_hammer": "Martillo de Hierro",
+  "item.mine-hammers.golden_hammer": "Martillo de Oro",
+  "item.mine-hammers.diamond_hammer": "Martillo de Diamante",
+  "item.mine-hammers.netherite_hammer": "Martillo de Netherita",
+  "item.mine-hammers.obsidian_hammer": "Martillo de Obsidiana",
+  "item.mine-hammers.emerald_hammer": "Martillo de Esmeralda",
+  "item.mine-hammers.lapis_hammer": "Martillo de Lapislázuli",
+  "item.mine-hammers.quartz_hammer": "Martillo de Cuarzo",
+  "item.mine-hammers.prismarine_hammer": "Martillo de Prismarina",
+  "item.mine-hammers.slime_hammer": "Martillo de Slime",
+  "item.mine-hammers.magma_hammer": "Martillo de Magma",
+  "item.mine-hammers.ender_hammer": "Martillo de Ender"
+}
