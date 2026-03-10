@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "mine-hammers:diamond_hammer",
+    "mine-hammers:emerald_hammer",
+    "mine-hammers:ender_hammer",
+    "mine-hammers:magma_hammer",
+    "mine-hammers:golden_hammer",
+    "mine-hammers:iron_hammer",
+    "mine-hammers:lapis_hammer",
+    "mine-hammers:netherite_hammer",
+    "mine-hammers:obsidian_hammer",
+    "mine-hammers:prismarine_hammer",
+    "mine-hammers:quartz_hammer",
+    "mine-hammers:slime_hammer",
+    "mine-hammers:stone_hammer",
+    "mine-hammers:wooden_hammer"
+  ]
+}
