@@ -51,12 +51,14 @@ public final class MineHammersConfig {
 		}
 
 		int radius = Math.max(0, Math.min(4, loaded.radius));
+		float hungerExhaustionPerExtraBlock = Math.max(0.0F, Math.min(1.0F, loaded.hungerExhaustionPerExtraBlock));
 		return new ConfigData(
 				loaded.areaMiningEnabled,
 				radius,
 				loaded.disableWhenSneaking,
 				loaded.onlyPickaxeMineable,
-				loaded.requireCorrectToolForDrops
+				loaded.requireCorrectToolForDrops,
+				hungerExhaustionPerExtraBlock
 		);
 	}
 
@@ -77,17 +79,26 @@ public final class MineHammersConfig {
 		public boolean disableWhenSneaking;
 		public boolean onlyPickaxeMineable;
 		public boolean requireCorrectToolForDrops;
+		public float hungerExhaustionPerExtraBlock;
 
 		public ConfigData() {
-			this(true, 1, true, true, true);
+			this(true, 1, true, true, true, 0.0125F);
 		}
 
-		public ConfigData(boolean areaMiningEnabled, int radius, boolean disableWhenSneaking, boolean onlyPickaxeMineable, boolean requireCorrectToolForDrops) {
+		public ConfigData(
+				boolean areaMiningEnabled,
+				int radius,
+				boolean disableWhenSneaking,
+				boolean onlyPickaxeMineable,
+				boolean requireCorrectToolForDrops,
+				float hungerExhaustionPerExtraBlock
+		) {
 			this.areaMiningEnabled = areaMiningEnabled;
 			this.radius = radius;
 			this.disableWhenSneaking = disableWhenSneaking;
 			this.onlyPickaxeMineable = onlyPickaxeMineable;
 			this.requireCorrectToolForDrops = requireCorrectToolForDrops;
+			this.hungerExhaustionPerExtraBlock = hungerExhaustionPerExtraBlock;
 		}
 
 		public static ConfigData defaults() {
