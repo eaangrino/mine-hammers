@@ -13,13 +13,13 @@
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
   },
   "criteria": {
-    "wooden_pickaxe": {
+    "wooden_hammer": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:wooden_pickaxe"
+              "mine-hammers:wooden_hammer"
             ]
           }
         ]
@@ -28,7 +28,7 @@
   },
   "requirements": [
     [
-      "wooden_pickaxe"
+      "wooden_hammer"
     ]
   ]
 }
