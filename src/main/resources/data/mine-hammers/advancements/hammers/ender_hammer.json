@@ -1,0 +1,35 @@
+{
+  "parent": "mine-hammers:hammers/emerald_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:ender_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.ender_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.ender_hammer.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "ender_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:ender_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ender_hammer"
+    ]
+  ]
+}

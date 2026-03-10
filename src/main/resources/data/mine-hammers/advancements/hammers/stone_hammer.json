@@ -1,0 +1,34 @@
+{
+  "parent": "mine-hammers:hammers/wooden_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:stone_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.stone_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.stone_hammer.description"
+    }
+  },
+  "criteria": {
+    "stone_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:stone_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "stone_hammer"
+    ]
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "parent": "mine-hammers:hammers/stone_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:prismarine_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.prismarine_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.prismarine_hammer.description"
+    }
+  },
+  "criteria": {
+    "prismarine_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:prismarine_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "prismarine_hammer"
+    ]
+  ]
+}

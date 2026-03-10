@@ -1,0 +1,34 @@
+{
+  "parent": "mine-hammers:hammers/diamond_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:obsidian_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.obsidian_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.obsidian_hammer.description"
+    }
+  },
+  "criteria": {
+    "obsidian_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:obsidian_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obsidian_hammer"
+    ]
+  ]
+}

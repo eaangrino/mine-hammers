@@ -1,0 +1,34 @@
+{
+  "parent": "mine-hammers:hammers/stone_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:lapis_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.lapis_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.lapis_hammer.description"
+    }
+  },
+  "criteria": {
+    "lapis_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:lapis_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lapis_hammer"
+    ]
+  ]
+}

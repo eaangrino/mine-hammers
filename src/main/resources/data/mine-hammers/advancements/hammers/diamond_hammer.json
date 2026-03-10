@@ -1,0 +1,35 @@
+{
+  "parent": "mine-hammers:hammers/iron_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:diamond_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.diamond_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.diamond_hammer.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "diamond_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:diamond_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "diamond_hammer"
+    ]
+  ]
+}

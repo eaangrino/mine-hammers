@@ -1,0 +1,35 @@
+{
+  "parent": "mine-hammers:hammers/iron_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:emerald_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.emerald_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.emerald_hammer.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "emerald_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:emerald_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "emerald_hammer"
+    ]
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "mine-hammers:hammers/root",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:slime_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.slime_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.slime_hammer.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "criteria": {
+    "slime_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:slime_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "slime_hammer"
+    ]
+  ]
+}

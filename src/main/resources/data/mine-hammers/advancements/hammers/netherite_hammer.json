@@ -1,0 +1,35 @@
+{
+  "parent": "mine-hammers:hammers/diamond_hammer",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "mine-hammers:netherite_hammer"
+    },
+    "title": {
+      "translate": "mine-hammers.advancements.netherite_hammer.title"
+    },
+    "description": {
+      "translate": "mine-hammers.advancements.netherite_hammer.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "netherite_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mine-hammers:netherite_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "netherite_hammer"
+    ]
+  ]
+}
