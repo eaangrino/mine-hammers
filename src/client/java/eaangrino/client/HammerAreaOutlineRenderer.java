@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import eaangrino.config.MineHammersConfig;
 import eaangrino.item.HammerItem;
+import eaangrino.mining.MiningShapes;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -41,7 +42,7 @@ public final class HammerAreaOutlineRenderer {
 			}
 
 			MineHammersConfig.ConfigData config = MineHammersConfig.get();
-			if (!config.areaMiningEnabled || config.radius <= 0) {
+			if (!config.areaMiningEnabled) {
 				return true;
 			}
 
@@ -66,8 +67,9 @@ public final class HammerAreaOutlineRenderer {
 			double cameraY = blockOutlineContext.cameraY();
 			double cameraZ = blockOutlineContext.cameraZ();
 
-			for (int first = -config.radius; first <= config.radius; first++) {
-				for (int second = -config.radius; second <= config.radius; second++) {
+			MiningShapes.PlaneRange shapeRange = MiningShapes.getRange(config.miningShape, axis);
+			for (int first = shapeRange.firstMin(); first <= shapeRange.firstMax(); first++) {
+				for (int second = shapeRange.secondMin(); second <= shapeRange.secondMax(); second++) {
 					if (first == 0 && second == 0) {
 						continue;
 					}

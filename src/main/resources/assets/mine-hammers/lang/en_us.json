@@ -42,5 +42,17 @@
   "mine-hammers.advancements.slime_hammer.title": "Bouncy Weapon",
   "mine-hammers.advancements.slime_hammer.description": "Craft a Slime Hammer and hit something with it.",
   "mine-hammers.advancements.magma_hammer.title": "Fiery Ends",
-  "mine-hammers.advancements.magma_hammer.description": "Finalize your descent with a Magma Hammer."
+  "mine-hammers.advancements.magma_hammer.description": "Finalize your descent with a Magma Hammer.",
+  "mine-hammers.config.title": "Mine Hammers Config",
+  "mine-hammers.config.area_mining": "Area Mining: %s",
+  "mine-hammers.config.mining_shape": "Mining Shape: %s",
+  "mine-hammers.config.disable_when_sneaking": "Disable While Sneaking: %s",
+  "mine-hammers.config.shift_scroll_switch": "Shift + Scroll Changes Shape: %s",
+  "mine-hammers.config.shift_scroll_hint": "Tip: hold Shift and scroll while using a hammer to switch shape.",
+  "mine-hammers.config.shape.changed": "Mining shape: %s",
+  "mine-hammers.config.shape.three_by_three": "3x3",
+  "mine-hammers.config.shape.tunnel_3x1": "3x1 Vertical Tunnel",
+  "mine-hammers.config.shape.tunnel_3x1_horizontal": "3x1 Horizontal Tunnel",
+  "modmenu.summaryTranslation.mine-hammers": "Hammer-based area mining with special abilities.",
+  "modmenu.descriptionTranslation.mine-hammers": "Adds hammers with unique powers and configurable mining shapes."
 }

@@ -42,5 +42,17 @@
   "mine-hammers.advancements.slime_hammer.title": "Arma Rebotadora",
   "mine-hammers.advancements.slime_hammer.description": "Craftea un Martillo de Slime y golpea algo con el.",
   "mine-hammers.advancements.magma_hammer.title": "Final Ardiente",
-  "mine-hammers.advancements.magma_hammer.description": "Finaliza tu descenso con un Martillo de Magma."
+  "mine-hammers.advancements.magma_hammer.description": "Finaliza tu descenso con un Martillo de Magma.",
+  "mine-hammers.config.title": "Configuracion de Mine Hammers",
+  "mine-hammers.config.area_mining": "Minado en Area: %s",
+  "mine-hammers.config.mining_shape": "Forma de Minado: %s",
+  "mine-hammers.config.disable_when_sneaking": "Desactivar al Agacharse: %s",
+  "mine-hammers.config.shift_scroll_switch": "Shift + Rueda Cambia Forma: %s",
+  "mine-hammers.config.shift_scroll_hint": "Tip: manten Shift y usa la rueda con un martillo para cambiar forma.",
+  "mine-hammers.config.shape.changed": "Forma de minado: %s",
+  "mine-hammers.config.shape.three_by_three": "3x3",
+  "mine-hammers.config.shape.tunnel_3x1": "Tunel Vertical 3x1",
+  "mine-hammers.config.shape.tunnel_3x1_horizontal": "Tunel Horizontal 3x1",
+  "modmenu.summaryTranslation.mine-hammers": "Minado en area con martillos y habilidades especiales.",
+  "modmenu.descriptionTranslation.mine-hammers": "Agrega martillos con poderes unicos y formas de minado configurables."
 }

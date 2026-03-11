@@ -1,6 +1,7 @@
 package eaangrino.item;
 
 import eaangrino.config.MineHammersConfig;
+import eaangrino.mining.MiningShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -97,7 +98,7 @@ public class HammerItem extends DiggerItem {
 		int brokenBlocks = 1;
 
 		MineHammersConfig.ConfigData config = MineHammersConfig.get();
-		if (!config.areaMiningEnabled || config.radius <= 0) {
+		if (!config.areaMiningEnabled) {
 			if (shouldSmelt) {
 				updateMagmaOverheatState(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			}
@@ -296,10 +297,10 @@ public class HammerItem extends DiggerItem {
 			boolean shouldSmelt,
 			Map<Item, Integer> convertedOutputs
 	) {
-		int radius = config.radius;
+		MiningShapes.PlaneRange shapeRange = MiningShapes.getRange(config.miningShape, axis);
 		int extraBrokenBlocks = 0;
-		for (int first = -radius; first <= radius; first++) {
-			for (int second = -radius; second <= radius; second++) {
+		for (int first = shapeRange.firstMin(); first <= shapeRange.firstMax(); first++) {
+			for (int second = shapeRange.secondMin(); second <= shapeRange.secondMax(); second++) {
 				if (first == 0 && second == 0) {
 					continue;
 				}

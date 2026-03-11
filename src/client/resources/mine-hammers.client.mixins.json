@@ -3,7 +3,7 @@
 	"package": "eaangrino.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"MouseHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -21,6 +21,9 @@
 		"client": [
 			"eaangrino.MineHammersClient"
 		],
+		"modmenu": [
+			"eaangrino.client.ModMenuIntegration"
+		],
 		"fabric-datagen": [
 			"eaangrino.MineHammersDataGenerator"
 		]

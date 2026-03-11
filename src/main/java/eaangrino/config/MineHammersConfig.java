@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import eaangrino.MineHammers;
+import eaangrino.mining.MiningShapes;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
@@ -45,6 +46,18 @@ public final class MineHammersConfig {
 		return config;
 	}
 
+	public static synchronized void set(ConfigData updatedConfig) {
+		config = sanitize(updatedConfig, ConfigData.defaults());
+		save();
+	}
+
+	public static synchronized String cycleMiningShape(int step) {
+		ConfigData current = get();
+		current.miningShape = MiningShapes.cycle(current.miningShape, step);
+		save();
+		return current.miningShape;
+	}
+
 	private static ConfigData sanitize(ConfigData loaded, ConfigData defaults) {
 		if (loaded == null) {
 			return defaults;
@@ -52,13 +65,19 @@ public final class MineHammersConfig {
 
 		int radius = Math.max(0, Math.min(4, loaded.radius));
 		float hungerExhaustionPerExtraBlock = Math.max(0.0F, Math.min(1.0F, loaded.hungerExhaustionPerExtraBlock));
+		String miningShape = MiningShapes.sanitize(loaded.miningShape, radius);
+		boolean shiftScrollShapeSwitchEnabled = loaded.miningShape == null
+				? defaults.shiftScrollShapeSwitchEnabled
+				: loaded.shiftScrollShapeSwitchEnabled;
 		return new ConfigData(
 				loaded.areaMiningEnabled,
 				radius,
 				loaded.disableWhenSneaking,
 				loaded.onlyPickaxeMineable,
 				loaded.requireCorrectToolForDrops,
-				hungerExhaustionPerExtraBlock
+				hungerExhaustionPerExtraBlock,
+				miningShape,
+				shiftScrollShapeSwitchEnabled
 		);
 	}
 
@@ -80,9 +99,11 @@ public final class MineHammersConfig {
 		public boolean onlyPickaxeMineable;
 		public boolean requireCorrectToolForDrops;
 		public float hungerExhaustionPerExtraBlock;
+		public String miningShape;
+		public boolean shiftScrollShapeSwitchEnabled;
 
 		public ConfigData() {
-			this(true, 1, true, true, true, 0.0125F);
+			this(true, 1, true, true, true, 0.0125F, MiningShapes.THREE_BY_THREE, true);
 		}
 
 		public ConfigData(
@@ -91,7 +112,9 @@ public final class MineHammersConfig {
 				boolean disableWhenSneaking,
 				boolean onlyPickaxeMineable,
 				boolean requireCorrectToolForDrops,
-				float hungerExhaustionPerExtraBlock
+				float hungerExhaustionPerExtraBlock,
+				String miningShape,
+				boolean shiftScrollShapeSwitchEnabled
 		) {
 			this.areaMiningEnabled = areaMiningEnabled;
 			this.radius = radius;
@@ -99,6 +122,8 @@ public final class MineHammersConfig {
 			this.onlyPickaxeMineable = onlyPickaxeMineable;
 			this.requireCorrectToolForDrops = requireCorrectToolForDrops;
 			this.hungerExhaustionPerExtraBlock = hungerExhaustionPerExtraBlock;
+			this.miningShape = miningShape;
+			this.shiftScrollShapeSwitchEnabled = shiftScrollShapeSwitchEnabled;
 		}
 
 		public static ConfigData defaults() {
