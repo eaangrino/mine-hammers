@@ -1,25 +1,24 @@
 package eaangrino.item;
 
 import eaangrino.config.MineHammersConfig;
+import eaangrino.item.ability.EmeraldHammerAbility;
+import eaangrino.item.ability.HammerAbility;
+import eaangrino.item.ability.MagmaHammerAbility;
+import eaangrino.item.ability.NetheriteHammerAbility;
 import eaangrino.mining.MiningShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
@@ -27,45 +26,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.AABB;
 
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HammerItem extends DiggerItem {
 	private static final ThreadLocal<Boolean> AREA_MINING_ACTIVE = ThreadLocal.withInitial(() -> false);
 	private static final String MAGMA_SMELTED_ENTITY_TAG = "mine_hammers_magma_smelted";
-	private static final String MAGMA_HEAT_TAG = "mine_hammers_magma_heat";
-	private static final String MAGMA_LAST_TICK_TAG = "mine_hammers_magma_last_tick";
-	private static final float MAGMA_MAX_HEAT = 100.0F;
-	private static final float MAGMA_HEAT_PER_BLOCK = 4.0F;
-	private static final float MAGMA_COOLDOWN_PER_SECOND = 3.0F;
-	private static final float MAGMA_HOT_THRESHOLD = 80.0F;
-	private static final int MAGMA_OVERHEAT_FATIGUE_TICKS = 60;
-	private static final int MAGMA_OVERHEAT_SOUND_COOLDOWN_TICKS = 20;
-	private static final String EMERALD_HAMMER_ITEM_PATH = "emerald_hammer";
-	private static final String NETHERITE_HAMMER_ITEM_PATH = "netherite_hammer";
-	private static final int NETHERITE_THERMAL_RADIUS = 6;
-	private static final int NETHERITE_THERMAL_HASTE_TICKS = 10;
-	private static final int EMERALD_ORE_SCAN_RADIUS = 6;
-	private static final int EMERALD_ORE_HIGHLIGHT_PARTICLES = 5;
-	private static final List<TagKey<Block>> ORE_SENSE_TARGET_TAGS = List.of(
-			BlockTags.COAL_ORES,
-			BlockTags.IRON_ORES,
-			BlockTags.GOLD_ORES,
-			BlockTags.REDSTONE_ORES,
-			BlockTags.LAPIS_ORES,
-			BlockTags.DIAMOND_ORES,
-			BlockTags.EMERALD_ORES
+	private static final Map<String, HammerAbility> ABILITIES = Map.of(
+			"emerald_hammer", new EmeraldHammerAbility(),
+			"magma_hammer", new MagmaHammerAbility(),
+			"netherite_hammer", new NetheriteHammerAbility()
 	);
 	private static final Map<Item, Item> MAGMA_COOK_RESULTS = createMagmaCookResults();
 	private static final Map<Block, Item> MAGMA_BLOCK_COOK_RESULTS = createMagmaBlockCookResults();
@@ -87,13 +63,9 @@ public class HammerItem extends DiggerItem {
 	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
 		super.inventoryTick(stack, level, entity, slotId, isSelected);
-		if (level.isClientSide() || !isSelected || !(entity instanceof ServerPlayer player) || !isNetheriteHammer()) {
-			return;
-		}
-
-		if (hasNearbyThermalSource(level, player.blockPosition())) {
-			// Haste provides stable mining speed amplification while thermal bonus is active.
-			player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, NETHERITE_THERMAL_HASTE_TICKS, 0, true, false, false));
+		HammerAbility ability = getAbility();
+		if (ability != null) {
+			ability.onInventoryTick(stack, level, entity, isSelected);
 		}
 	}
 
@@ -108,17 +80,19 @@ public class HammerItem extends DiggerItem {
 			return false;
 		}
 
+		HammerAbility ability = getAbility();
 		boolean shouldSmelt = smeltsBlocks();
 		Map<Item, Integer> inventoryBefore = shouldSmelt ? snapshotInventoryCounts(player.getInventory()) : Map.of();
 		Map<Item, Integer> convertedOutputs = shouldSmelt ? smeltDropsForBrokenBlock(level, pos, state) : Map.of();
-		triggerEmeraldOreSense(level, state, pos);
-		triggerNetheriteThermalStability(level, pos);
+		if (ability != null) {
+			ability.onPrimaryBlockMined(stack, (ServerLevel) level, player, state, pos);
+		}
 		int brokenBlocks = 1;
 
 		MineHammersConfig.ConfigData config = MineHammersConfig.get();
 		if (!config.areaMiningEnabled) {
-			if (shouldSmelt) {
-				updateMagmaOverheatState(stack, (ServerLevel) level, player, pos, brokenBlocks);
+			if (ability != null) {
+				ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			}
 			if (shouldSmelt) {
 				smeltNewlyCollectedInventoryItems(player, level, inventoryBefore, convertedOutputs);
@@ -127,8 +101,8 @@ public class HammerItem extends DiggerItem {
 		}
 
 		if (config.disableWhenSneaking && player.isShiftKeyDown()) {
-			if (shouldSmelt) {
-				updateMagmaOverheatState(stack, (ServerLevel) level, player, pos, brokenBlocks);
+			if (ability != null) {
+				ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			}
 			if (shouldSmelt) {
 				smeltNewlyCollectedInventoryItems(player, level, inventoryBefore, convertedOutputs);
@@ -144,213 +118,20 @@ public class HammerItem extends DiggerItem {
 			AREA_MINING_ACTIVE.set(false);
 		}
 
+		if (ability != null) {
+			ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
+		}
+
 		if (shouldSmelt) {
-			updateMagmaOverheatState(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			smeltNewlyCollectedInventoryItems(player, level, inventoryBefore, convertedOutputs);
 		}
 
 		return mined;
 	}
 
-	private static void updateMagmaOverheatState(ItemStack stack, ServerLevel level, ServerPlayer player, BlockPos pos, int blocksBroken) {
-		CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-		CompoundTag tag = customData.copyTag();
-		long gameTime = level.getGameTime();
-		long lastTick = tag.getLong(MAGMA_LAST_TICK_TAG);
-		float heat = tag.getFloat(MAGMA_HEAT_TAG);
-
-		if (player.isInWaterOrRain()) {
-			heat = 0.0F;
-		} else if (lastTick > 0L && gameTime > lastTick) {
-			float cooldown = (gameTime - lastTick) * (MAGMA_COOLDOWN_PER_SECOND / 20.0F);
-			heat = Math.max(0.0F, heat - cooldown);
-		}
-
-		heat = Math.min(MAGMA_MAX_HEAT, heat + (MAGMA_HEAT_PER_BLOCK * Math.max(1, blocksBroken)));
-		tag.putFloat(MAGMA_HEAT_TAG, heat);
-		tag.putLong(MAGMA_LAST_TICK_TAG, gameTime);
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-
-		if (heat >= MAGMA_MAX_HEAT) {
-			player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, MAGMA_OVERHEAT_FATIGUE_TICKS, 1, true, true, true));
-			if (gameTime - lastTick >= MAGMA_OVERHEAT_SOUND_COOLDOWN_TICKS) {
-				level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.8F, 1.1F);
-			}
-			level.sendParticles(
-					ParticleTypes.LARGE_SMOKE,
-					pos.getX() + 0.5D,
-					pos.getY() + 0.8D,
-					pos.getZ() + 0.5D,
-					14,
-					0.35D,
-					0.35D,
-					0.35D,
-					0.02D
-			);
-			return;
-		}
-
-		if (heat >= MAGMA_HOT_THRESHOLD) {
-			level.sendParticles(
-					ParticleTypes.SMOKE,
-					pos.getX() + 0.5D,
-					pos.getY() + 0.7D,
-					pos.getZ() + 0.5D,
-					4,
-					0.2D,
-					0.2D,
-					0.2D,
-					0.01D
-			);
-		}
-	}
-
-	private void triggerEmeraldOreSense(Level level, BlockState brokenState, BlockPos origin) {
-		if (!(level instanceof ServerLevel serverLevel) || !isEmeraldHammer()) {
-			return;
-		}
-
-		if (!isOreSenseTriggerBlock(brokenState)) {
-			return;
-		}
-
-		serverLevel.sendParticles(
-				ParticleTypes.HAPPY_VILLAGER,
-				origin.getX() + 0.5D,
-				origin.getY() + 0.5D,
-				origin.getZ() + 0.5D,
-				8,
-				0.35D,
-				0.35D,
-				0.35D,
-				0.01D
-		);
-
-		BlockPos.betweenClosedStream(
-				origin.offset(-EMERALD_ORE_SCAN_RADIUS, -EMERALD_ORE_SCAN_RADIUS, -EMERALD_ORE_SCAN_RADIUS),
-				origin.offset(EMERALD_ORE_SCAN_RADIUS, EMERALD_ORE_SCAN_RADIUS, EMERALD_ORE_SCAN_RADIUS)
-		).forEach(scanPos -> {
-			BlockState scanState = serverLevel.getBlockState(scanPos);
-			if (isOreSenseTarget(scanState)) {
-				spawnOreSenseParticles(serverLevel, scanPos.immutable());
-			}
-		});
-	}
-
-	private boolean isEmeraldHammer() {
+	private HammerAbility getAbility() {
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(this);
-		return itemId != null && EMERALD_HAMMER_ITEM_PATH.equals(itemId.getPath());
-	}
-
-	private boolean isNetheriteHammer() {
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(this);
-		return itemId != null && NETHERITE_HAMMER_ITEM_PATH.equals(itemId.getPath());
-	}
-
-	private static boolean isOreSenseTarget(BlockState state) {
-		for (TagKey<Block> tag : ORE_SENSE_TARGET_TAGS) {
-			if (state.is(tag)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static boolean isOreSenseTriggerBlock(BlockState state) {
-		return state.is(Blocks.STONE)
-				|| state.is(Blocks.DEEPSLATE)
-				|| state.is(BlockTags.BASE_STONE_OVERWORLD)
-				|| state.is(BlockTags.STONE_ORE_REPLACEABLES)
-				|| state.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-	}
-
-	private static void spawnOreSenseParticles(ServerLevel level, BlockPos orePos) {
-		boolean spawnedNearAir = false;
-		for (Direction direction : Direction.values()) {
-			BlockPos adjacentPos = orePos.relative(direction);
-			if (!level.getBlockState(adjacentPos).isAir()) {
-				continue;
-			}
-
-			spawnedNearAir = true;
-			level.sendParticles(
-					ParticleTypes.HAPPY_VILLAGER,
-					adjacentPos.getX() + 0.5D,
-					adjacentPos.getY() + 0.5D,
-					adjacentPos.getZ() + 0.5D,
-					2,
-					0.15D,
-					0.15D,
-					0.15D,
-					0.01D
-			);
-		}
-
-		if (!spawnedNearAir) {
-			level.sendParticles(
-					ParticleTypes.HAPPY_VILLAGER,
-					orePos.getX() + 0.5D,
-					orePos.getY() + 0.5D,
-					orePos.getZ() + 0.5D,
-					EMERALD_ORE_HIGHLIGHT_PARTICLES,
-					0.2D,
-					0.2D,
-					0.2D,
-					0.01D
-			);
-		}
-	}
-
-	private void triggerNetheriteThermalStability(Level level, BlockPos origin) {
-		if (!(level instanceof ServerLevel serverLevel) || !isNetheriteHammer() || !hasNearbyThermalSource(level, origin)) {
-			return;
-		}
-
-		serverLevel.sendParticles(
-				ParticleTypes.SMALL_FLAME,
-				origin.getX() + 0.5D,
-				origin.getY() + 0.6D,
-				origin.getZ() + 0.5D,
-				4,
-				0.2D,
-				0.2D,
-				0.2D,
-				0.01D
-		);
-		serverLevel.sendParticles(
-				ParticleTypes.SMOKE,
-				origin.getX() + 0.5D,
-				origin.getY() + 0.7D,
-				origin.getZ() + 0.5D,
-				3,
-				0.2D,
-				0.2D,
-				0.2D,
-				0.01D
-		);
-
-		if (serverLevel.random.nextFloat() < 0.15F) {
-			serverLevel.playSound(null, origin, SoundEvents.LAVA_POP, SoundSource.PLAYERS, 0.25F, 1.2F);
-		}
-	}
-
-	private static boolean hasNearbyThermalSource(Level level, BlockPos origin) {
-		for (BlockPos scanPos : BlockPos.betweenClosed(
-				origin.offset(-NETHERITE_THERMAL_RADIUS, -NETHERITE_THERMAL_RADIUS, -NETHERITE_THERMAL_RADIUS),
-				origin.offset(NETHERITE_THERMAL_RADIUS, NETHERITE_THERMAL_RADIUS, NETHERITE_THERMAL_RADIUS))) {
-			if (isThermalSource(level.getBlockState(scanPos))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static boolean isThermalSource(BlockState state) {
-		return state.is(Blocks.LAVA)
-				|| state.is(Blocks.MAGMA_BLOCK)
-				|| state.is(Blocks.FIRE)
-				|| state.is(Blocks.SOUL_FIRE)
-				|| state.is(Blocks.LAVA_CAULDRON);
+		return itemId == null ? null : ABILITIES.get(itemId.getPath());
 	}
 
 	private static Direction.Axis getMiningPlaneAxis(ServerPlayer player) {
