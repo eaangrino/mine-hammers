@@ -15,6 +15,13 @@ public interface HammerAbility {
 	default void onPrimaryBlockMined(ItemStack stack, ServerLevel level, ServerPlayer player, BlockState brokenState, BlockPos blockPos) {
 	}
 
+	default void onExtraBlockMined(ItemStack stack, ServerLevel level, ServerPlayer player, BlockState brokenState, BlockPos blockPos) {
+	}
+
+	default boolean shouldSkipAreaBlock(ItemStack stack, ServerLevel level, ServerPlayer player, BlockState targetState, BlockPos targetPos) {
+		return false;
+	}
+
 	default void onBlockMiningFinished(ItemStack stack, ServerLevel level, ServerPlayer player, BlockPos blockPos, int totalBrokenBlocks) {
 	}
 }

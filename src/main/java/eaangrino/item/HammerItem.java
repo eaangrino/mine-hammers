@@ -3,6 +3,7 @@ package eaangrino.item;
 import eaangrino.config.MineHammersConfig;
 import eaangrino.item.ability.EmeraldHammerAbility;
 import eaangrino.item.ability.HammerAbility;
+import eaangrino.item.ability.IronHammerAbility;
 import eaangrino.item.ability.MagmaHammerAbility;
 import eaangrino.item.ability.NetheriteHammerAbility;
 import eaangrino.mining.MiningShapes;
@@ -40,6 +41,7 @@ public class HammerItem extends DiggerItem {
 	private static final String MAGMA_SMELTED_ENTITY_TAG = "mine_hammers_magma_smelted";
 	private static final Map<String, HammerAbility> ABILITIES = Map.of(
 			"emerald_hammer", new EmeraldHammerAbility(),
+			"iron_hammer", new IronHammerAbility(),
 			"magma_hammer", new MagmaHammerAbility(),
 			"netherite_hammer", new NetheriteHammerAbility()
 	);
@@ -113,7 +115,7 @@ public class HammerItem extends DiggerItem {
 		Direction.Axis axis = getMiningPlaneAxis(player);
 		AREA_MINING_ACTIVE.set(true);
 		try {
-			brokenBlocks += breakArea(stack, player, level, pos, axis, config, shouldSmelt, convertedOutputs);
+			brokenBlocks += breakArea(stack, player, level, pos, axis, config, shouldSmelt, convertedOutputs, ability);
 		} finally {
 			AREA_MINING_ACTIVE.set(false);
 		}
@@ -151,7 +153,8 @@ public class HammerItem extends DiggerItem {
 			Direction.Axis axis,
 			MineHammersConfig.ConfigData config,
 			boolean shouldSmelt,
-			Map<Item, Integer> convertedOutputs
+			Map<Item, Integer> convertedOutputs,
+			HammerAbility ability
 	) {
 		MiningShapes.PlaneRange shapeRange = MiningShapes.getRange(config.miningShape, axis);
 		int extraBrokenBlocks = 0;
@@ -167,7 +170,7 @@ public class HammerItem extends DiggerItem {
 					case Z -> origin.offset(first, second, 0);
 				};
 
-				if (tryBreakExtraBlock(stack, player, level, targetPos, config, shouldSmelt, convertedOutputs)) {
+				if (tryBreakExtraBlock(stack, player, level, targetPos, config, shouldSmelt, convertedOutputs, ability)) {
 					extraBrokenBlocks++;
 				}
 			}
@@ -182,7 +185,8 @@ public class HammerItem extends DiggerItem {
 			BlockPos targetPos,
 			MineHammersConfig.ConfigData config,
 			boolean shouldSmelt,
-			Map<Item, Integer> convertedOutputs
+			Map<Item, Integer> convertedOutputs,
+			HammerAbility ability
 	) {
 		if (!player.canInteractWithBlock(targetPos, 1.0D) || !player.mayUseItemAt(targetPos, Direction.UP, stack)) {
 			return false;
@@ -200,10 +204,16 @@ public class HammerItem extends DiggerItem {
 		if (config.requireCorrectToolForDrops && !player.hasCorrectToolForDrops(targetState)) {
 			return false;
 		}
+		if (ability != null && ability.shouldSkipAreaBlock(stack, (ServerLevel) level, player, targetState, targetPos)) {
+			return false;
+		}
 
 		if (player.gameMode.destroyBlock(targetPos)) {
 			if (shouldSmelt) {
 				mergeCounts(convertedOutputs, smeltDropsForBrokenBlock(level, targetPos, targetState));
+			}
+			if (ability != null) {
+				ability.onExtraBlockMined(stack, (ServerLevel) level, player, targetState, targetPos);
 			}
 
 			if (!player.getAbilities().instabuild) {
