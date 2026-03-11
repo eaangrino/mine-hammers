@@ -3,6 +3,7 @@ package eaangrino.item;
 import eaangrino.config.MineHammersConfig;
 import eaangrino.item.ability.EmeraldHammerAbility;
 import eaangrino.item.ability.HammerAbility;
+import eaangrino.item.ability.DiamondHammerAbility;
 import eaangrino.item.ability.IronHammerAbility;
 import eaangrino.item.ability.MagmaHammerAbility;
 import eaangrino.item.ability.NetheriteHammerAbility;
@@ -40,6 +41,7 @@ public class HammerItem extends DiggerItem {
 	private static final ThreadLocal<Boolean> AREA_MINING_ACTIVE = ThreadLocal.withInitial(() -> false);
 	private static final String MAGMA_SMELTED_ENTITY_TAG = "mine_hammers_magma_smelted";
 	private static final Map<String, HammerAbility> ABILITIES = Map.of(
+			"diamond_hammer", new DiamondHammerAbility(),
 			"emerald_hammer", new EmeraldHammerAbility(),
 			"iron_hammer", new IronHammerAbility(),
 			"magma_hammer", new MagmaHammerAbility(),
@@ -92,7 +94,9 @@ public class HammerItem extends DiggerItem {
 		int brokenBlocks = 1;
 
 		MineHammersConfig.ConfigData config = MineHammersConfig.get();
-		if (!config.areaMiningEnabled) {
+		boolean areaMiningAllowed = config.areaMiningEnabled
+				&& (ability == null || ability.allowAreaMiningForPrimaryBlock(stack, (ServerLevel) level, player, state, pos));
+		if (!areaMiningAllowed) {
 			if (ability != null) {
 				ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			}

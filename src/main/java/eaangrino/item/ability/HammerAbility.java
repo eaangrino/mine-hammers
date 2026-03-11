@@ -22,6 +22,10 @@ public interface HammerAbility {
 		return false;
 	}
 
+	default boolean allowAreaMiningForPrimaryBlock(ItemStack stack, ServerLevel level, ServerPlayer player, BlockState primaryState, BlockPos primaryPos) {
+		return true;
+	}
+
 	default void onBlockMiningFinished(ItemStack stack, ServerLevel level, ServerPlayer player, BlockPos blockPos, int totalBrokenBlocks) {
 	}
 }
