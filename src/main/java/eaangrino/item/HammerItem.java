@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -52,6 +53,9 @@ public class HammerItem extends DiggerItem {
 	private static final int MAGMA_OVERHEAT_FATIGUE_TICKS = 60;
 	private static final int MAGMA_OVERHEAT_SOUND_COOLDOWN_TICKS = 20;
 	private static final String EMERALD_HAMMER_ITEM_PATH = "emerald_hammer";
+	private static final String NETHERITE_HAMMER_ITEM_PATH = "netherite_hammer";
+	private static final int NETHERITE_THERMAL_RADIUS = 6;
+	private static final int NETHERITE_THERMAL_HASTE_TICKS = 10;
 	private static final int EMERALD_ORE_SCAN_RADIUS = 6;
 	private static final int EMERALD_ORE_HIGHLIGHT_PARTICLES = 5;
 	private static final List<TagKey<Block>> ORE_SENSE_TARGET_TAGS = List.of(
@@ -81,6 +85,19 @@ public class HammerItem extends DiggerItem {
 	}
 
 	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		super.inventoryTick(stack, level, entity, slotId, isSelected);
+		if (level.isClientSide() || !isSelected || !(entity instanceof ServerPlayer player) || !isNetheriteHammer()) {
+			return;
+		}
+
+		if (hasNearbyThermalSource(level, player.blockPosition())) {
+			// Haste provides stable mining speed amplification while thermal bonus is active.
+			player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, NETHERITE_THERMAL_HASTE_TICKS, 0, true, false, false));
+		}
+	}
+
+	@Override
 	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity livingEntity) {
 		boolean mined = super.mineBlock(stack, level, state, pos, livingEntity);
 
@@ -95,6 +112,7 @@ public class HammerItem extends DiggerItem {
 		Map<Item, Integer> inventoryBefore = shouldSmelt ? snapshotInventoryCounts(player.getInventory()) : Map.of();
 		Map<Item, Integer> convertedOutputs = shouldSmelt ? smeltDropsForBrokenBlock(level, pos, state) : Map.of();
 		triggerEmeraldOreSense(level, state, pos);
+		triggerNetheriteThermalStability(level, pos);
 		int brokenBlocks = 1;
 
 		MineHammersConfig.ConfigData config = MineHammersConfig.get();
@@ -224,6 +242,11 @@ public class HammerItem extends DiggerItem {
 		return itemId != null && EMERALD_HAMMER_ITEM_PATH.equals(itemId.getPath());
 	}
 
+	private boolean isNetheriteHammer() {
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(this);
+		return itemId != null && NETHERITE_HAMMER_ITEM_PATH.equals(itemId.getPath());
+	}
+
 	private static boolean isOreSenseTarget(BlockState state) {
 		for (TagKey<Block> tag : ORE_SENSE_TARGET_TAGS) {
 			if (state.is(tag)) {
@@ -276,6 +299,58 @@ public class HammerItem extends DiggerItem {
 					0.01D
 			);
 		}
+	}
+
+	private void triggerNetheriteThermalStability(Level level, BlockPos origin) {
+		if (!(level instanceof ServerLevel serverLevel) || !isNetheriteHammer() || !hasNearbyThermalSource(level, origin)) {
+			return;
+		}
+
+		serverLevel.sendParticles(
+				ParticleTypes.SMALL_FLAME,
+				origin.getX() + 0.5D,
+				origin.getY() + 0.6D,
+				origin.getZ() + 0.5D,
+				4,
+				0.2D,
+				0.2D,
+				0.2D,
+				0.01D
+		);
+		serverLevel.sendParticles(
+				ParticleTypes.SMOKE,
+				origin.getX() + 0.5D,
+				origin.getY() + 0.7D,
+				origin.getZ() + 0.5D,
+				3,
+				0.2D,
+				0.2D,
+				0.2D,
+				0.01D
+		);
+
+		if (serverLevel.random.nextFloat() < 0.15F) {
+			serverLevel.playSound(null, origin, SoundEvents.LAVA_POP, SoundSource.PLAYERS, 0.25F, 1.2F);
+		}
+	}
+
+	private static boolean hasNearbyThermalSource(Level level, BlockPos origin) {
+		for (BlockPos scanPos : BlockPos.betweenClosed(
+				origin.offset(-NETHERITE_THERMAL_RADIUS, -NETHERITE_THERMAL_RADIUS, -NETHERITE_THERMAL_RADIUS),
+				origin.offset(NETHERITE_THERMAL_RADIUS, NETHERITE_THERMAL_RADIUS, NETHERITE_THERMAL_RADIUS))) {
+			if (isThermalSource(level.getBlockState(scanPos))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isThermalSource(BlockState state) {
+		return state.is(Blocks.LAVA)
+				|| state.is(Blocks.MAGMA_BLOCK)
+				|| state.is(Blocks.FIRE)
+				|| state.is(Blocks.SOUL_FIRE)
+				|| state.is(Blocks.LAVA_CAULDRON);
 	}
 
 	private static Direction.Axis getMiningPlaneAxis(ServerPlayer player) {
