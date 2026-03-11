@@ -3,10 +3,12 @@ package eaangrino.item;
 import eaangrino.config.MineHammersConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -23,14 +25,28 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.phys.AABB;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HammerItem extends DiggerItem {
 	private static final ThreadLocal<Boolean> AREA_MINING_ACTIVE = ThreadLocal.withInitial(() -> false);
 	private static final String MAGMA_SMELTED_ENTITY_TAG = "mine_hammers_magma_smelted";
+	private static final String EMERALD_HAMMER_ITEM_PATH = "emerald_hammer";
+	private static final int EMERALD_ORE_SCAN_RADIUS = 6;
+	private static final int EMERALD_ORE_HIGHLIGHT_PARTICLES = 5;
+	private static final List<TagKey<Block>> ORE_SENSE_TARGET_TAGS = List.of(
+			BlockTags.COAL_ORES,
+			BlockTags.IRON_ORES,
+			BlockTags.GOLD_ORES,
+			BlockTags.REDSTONE_ORES,
+			BlockTags.LAPIS_ORES,
+			BlockTags.DIAMOND_ORES,
+			BlockTags.EMERALD_ORES
+	);
 	private static final Map<Item, Item> MAGMA_COOK_RESULTS = createMagmaCookResults();
 	private static final Map<Block, Item> MAGMA_BLOCK_COOK_RESULTS = createMagmaBlockCookResults();
 	private final boolean smelts;
@@ -59,6 +75,7 @@ public class HammerItem extends DiggerItem {
 		boolean shouldSmelt = smeltsBlocks();
 		Map<Item, Integer> inventoryBefore = shouldSmelt ? snapshotInventoryCounts(player.getInventory()) : Map.of();
 		Map<Item, Integer> convertedOutputs = shouldSmelt ? smeltDropsForBrokenBlock(level, pos, state) : Map.of();
+		triggerEmeraldOreSense(level, state, pos);
 
 		MineHammersConfig.ConfigData config = MineHammersConfig.get();
 		if (!config.areaMiningEnabled || config.radius <= 0) {
@@ -88,6 +105,97 @@ public class HammerItem extends DiggerItem {
 		}
 
 		return mined;
+	}
+
+	private void triggerEmeraldOreSense(Level level, BlockState brokenState, BlockPos origin) {
+		if (!(level instanceof ServerLevel serverLevel) || !isEmeraldHammer()) {
+			return;
+		}
+
+		if (!isOreSenseTriggerBlock(brokenState)) {
+			return;
+		}
+
+		serverLevel.sendParticles(
+				ParticleTypes.HAPPY_VILLAGER,
+				origin.getX() + 0.5D,
+				origin.getY() + 0.5D,
+				origin.getZ() + 0.5D,
+				8,
+				0.35D,
+				0.35D,
+				0.35D,
+				0.01D
+		);
+
+		BlockPos.betweenClosedStream(
+				origin.offset(-EMERALD_ORE_SCAN_RADIUS, -EMERALD_ORE_SCAN_RADIUS, -EMERALD_ORE_SCAN_RADIUS),
+				origin.offset(EMERALD_ORE_SCAN_RADIUS, EMERALD_ORE_SCAN_RADIUS, EMERALD_ORE_SCAN_RADIUS)
+		).forEach(scanPos -> {
+			BlockState scanState = serverLevel.getBlockState(scanPos);
+			if (isOreSenseTarget(scanState)) {
+				spawnOreSenseParticles(serverLevel, scanPos.immutable());
+			}
+		});
+	}
+
+	private boolean isEmeraldHammer() {
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(this);
+		return itemId != null && EMERALD_HAMMER_ITEM_PATH.equals(itemId.getPath());
+	}
+
+	private static boolean isOreSenseTarget(BlockState state) {
+		for (TagKey<Block> tag : ORE_SENSE_TARGET_TAGS) {
+			if (state.is(tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isOreSenseTriggerBlock(BlockState state) {
+		return state.is(Blocks.STONE)
+				|| state.is(Blocks.DEEPSLATE)
+				|| state.is(BlockTags.BASE_STONE_OVERWORLD)
+				|| state.is(BlockTags.STONE_ORE_REPLACEABLES)
+				|| state.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
+	}
+
+	private static void spawnOreSenseParticles(ServerLevel level, BlockPos orePos) {
+		boolean spawnedNearAir = false;
+		for (Direction direction : Direction.values()) {
+			BlockPos adjacentPos = orePos.relative(direction);
+			if (!level.getBlockState(adjacentPos).isAir()) {
+				continue;
+			}
+
+			spawnedNearAir = true;
+			level.sendParticles(
+					ParticleTypes.HAPPY_VILLAGER,
+					adjacentPos.getX() + 0.5D,
+					adjacentPos.getY() + 0.5D,
+					adjacentPos.getZ() + 0.5D,
+					2,
+					0.15D,
+					0.15D,
+					0.15D,
+					0.01D
+			);
+		}
+
+		if (!spawnedNearAir) {
+			level.sendParticles(
+					ParticleTypes.HAPPY_VILLAGER,
+					orePos.getX() + 0.5D,
+					orePos.getY() + 0.5D,
+					orePos.getZ() + 0.5D,
+					EMERALD_ORE_HIGHLIGHT_PARTICLES,
+					0.2D,
+					0.2D,
+					0.2D,
+					0.01D
+			);
+		}
 	}
 
 	private static Direction.Axis getMiningPlaneAxis(ServerPlayer player) {
