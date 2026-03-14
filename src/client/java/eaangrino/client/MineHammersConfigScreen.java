@@ -13,6 +13,7 @@ public class MineHammersConfigScreen extends Screen {
 	private Button areaMiningButton;
 	private Button miningShapeButton;
 	private Button sneakingButton;
+	private Button abilitiesButton;
 	private Button shiftScrollButton;
 
 	public MineHammersConfigScreen(Screen parent) {
@@ -23,6 +24,7 @@ public class MineHammersConfigScreen extends Screen {
 				current.areaMiningEnabled,
 				current.radius,
 				current.disableWhenSneaking,
+				current.enableHammerAbilities,
 				current.onlyPickaxeMineable,
 				current.requireCorrectToolForDrops,
 				current.hungerExhaustionPerExtraBlock,
@@ -54,23 +56,28 @@ public class MineHammersConfigScreen extends Screen {
 			refreshButtons();
 		}).bounds(centerX - width / 2, top + step * 2, width, height).build());
 
+		abilitiesButton = addRenderableWidget(Button.builder(Component.empty(), button -> {
+			draftConfig.enableHammerAbilities = !draftConfig.enableHammerAbilities;
+			refreshButtons();
+		}).bounds(centerX - width / 2, top + step * 3, width, height).build());
+
 		shiftScrollButton = addRenderableWidget(Button.builder(Component.empty(), button -> {
 			draftConfig.shiftScrollShapeSwitchEnabled = !draftConfig.shiftScrollShapeSwitchEnabled;
 			refreshButtons();
-		}).bounds(centerX - width / 2, top + step * 3, width, height).build());
+		}).bounds(centerX - width / 2, top + step * 4, width, height).build());
 
 		addRenderableWidget(Button.builder(Component.translatable("gui.done"), button -> {
 			MineHammersConfig.set(draftConfig);
 			if (minecraft != null) {
 				minecraft.setScreen(parent);
 			}
-		}).bounds(centerX - 102, top + step * 5, 100, height).build());
+		}).bounds(centerX - 102, top + step * 6, 100, height).build());
 
 		addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> {
 			if (minecraft != null) {
 				minecraft.setScreen(parent);
 			}
-		}).bounds(centerX + 2, top + step * 5, 100, height).build());
+		}).bounds(centerX + 2, top + step * 6, 100, height).build());
 
 		refreshButtons();
 	}
@@ -81,6 +88,7 @@ public class MineHammersConfigScreen extends Screen {
 				Component.translatable("mine-hammers.config.mining_shape", Component.translatable("mine-hammers.config.shape." + MiningShapes.sanitize(draftConfig.miningShape, draftConfig.radius)))
 		);
 		sneakingButton.setMessage(toggleLabel("mine-hammers.config.disable_when_sneaking", draftConfig.disableWhenSneaking));
+		abilitiesButton.setMessage(toggleLabel("mine-hammers.config.enable_hammer_abilities", draftConfig.enableHammerAbilities));
 		shiftScrollButton.setMessage(toggleLabel("mine-hammers.config.shift_scroll_switch", draftConfig.shiftScrollShapeSwitchEnabled));
 		miningShapeButton.active = draftConfig.areaMiningEnabled;
 	}
@@ -93,6 +101,6 @@ public class MineHammersConfigScreen extends Screen {
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 		guiGraphics.drawCenteredString(font, title, width / 2, 20, 0xFFFFFF);
-		guiGraphics.drawCenteredString(font, Component.translatable("mine-hammers.config.shift_scroll_hint"), width / 2, height / 4 + 105, 0xA0A0A0);
+		guiGraphics.drawCenteredString(font, Component.translatable("mine-hammers.config.shift_scroll_hint"), width / 2, height / 4 + 129, 0xA0A0A0);
 	}
 }

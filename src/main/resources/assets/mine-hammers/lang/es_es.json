@@ -47,6 +47,7 @@
   "mine-hammers.config.area_mining": "Minado en Area: %s",
   "mine-hammers.config.mining_shape": "Forma de Minado: %s",
   "mine-hammers.config.disable_when_sneaking": "Desactivar al Agacharse: %s",
+  "mine-hammers.config.enable_hammer_abilities": "Habilitar Habilidades del Martillo: %s",
   "mine-hammers.config.shift_scroll_switch": "Shift + Rueda Cambia Forma: %s",
   "mine-hammers.config.shift_scroll_hint": "Tip: manten Shift y usa la rueda con un martillo para cambiar forma.",
   "mine-hammers.config.shape.changed": "Forma de minado: %s",

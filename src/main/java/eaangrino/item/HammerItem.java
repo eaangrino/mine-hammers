@@ -79,7 +79,7 @@ public class HammerItem extends DiggerItem {
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
 		super.inventoryTick(stack, level, entity, slotId, isSelected);
 		HammerAbility ability = getAbility();
-		if (ability != null) {
+		if (ability != null && areHammerAbilitiesEnabled()) {
 			ability.onInventoryTick(stack, level, entity, isSelected);
 		}
 	}
@@ -96,20 +96,22 @@ public class HammerItem extends DiggerItem {
 		}
 
 		HammerAbility ability = getAbility();
-		boolean shouldSmelt = smeltsBlocks();
+		boolean abilitiesEnabled = areHammerAbilitiesEnabled();
+		HammerAbility activeAbility = abilitiesEnabled ? ability : null;
+		boolean shouldSmelt = abilitiesEnabled && smeltsBlocks();
 		Map<Item, Integer> inventoryBefore = shouldSmelt ? snapshotInventoryCounts(player.getInventory()) : Map.of();
 		Map<Item, Integer> convertedOutputs = shouldSmelt ? smeltDropsForBrokenBlock(level, pos, state) : Map.of();
-		if (ability != null) {
-			ability.onPrimaryBlockMined(stack, (ServerLevel) level, player, state, pos);
+		if (activeAbility != null) {
+			activeAbility.onPrimaryBlockMined(stack, (ServerLevel) level, player, state, pos);
 		}
 		int brokenBlocks = 1;
 
 		MineHammersConfig.ConfigData config = MineHammersConfig.get();
 		boolean areaMiningAllowed = config.areaMiningEnabled
-				&& (ability == null || ability.allowAreaMiningForPrimaryBlock(stack, (ServerLevel) level, player, state, pos));
+				&& (activeAbility == null || activeAbility.allowAreaMiningForPrimaryBlock(stack, (ServerLevel) level, player, state, pos));
 		if (!areaMiningAllowed) {
-			if (ability != null) {
-				ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
+			if (activeAbility != null) {
+				activeAbility.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			}
 			if (shouldSmelt) {
 				smeltNewlyCollectedInventoryItems(player, level, inventoryBefore, convertedOutputs);
@@ -118,8 +120,8 @@ public class HammerItem extends DiggerItem {
 		}
 
 		if (config.disableWhenSneaking && player.isShiftKeyDown()) {
-			if (ability != null) {
-				ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
+			if (activeAbility != null) {
+				activeAbility.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
 			}
 			if (shouldSmelt) {
 				smeltNewlyCollectedInventoryItems(player, level, inventoryBefore, convertedOutputs);
@@ -130,13 +132,13 @@ public class HammerItem extends DiggerItem {
 		Direction.Axis axis = getMiningPlaneAxis(player, pos);
 		AREA_MINING_ACTIVE.set(true);
 		try {
-			brokenBlocks += breakArea(stack, player, level, pos, axis, config, shouldSmelt, convertedOutputs, ability);
+			brokenBlocks += breakArea(stack, player, level, pos, axis, config, shouldSmelt, convertedOutputs, activeAbility);
 		} finally {
 			AREA_MINING_ACTIVE.set(false);
 		}
 
-		if (ability != null) {
-			ability.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
+		if (activeAbility != null) {
+			activeAbility.onBlockMiningFinished(stack, (ServerLevel) level, player, pos, brokenBlocks);
 		}
 
 		if (shouldSmelt) {
@@ -167,11 +169,19 @@ public class HammerItem extends DiggerItem {
 	}
 
 	private static HammerAbility getAbility(ItemStack stack) {
+		if (!areHammerAbilitiesEnabled()) {
+			return null;
+		}
+
 		if (!(stack.getItem() instanceof HammerItem hammerItem)) {
 			return null;
 		}
 
 		return hammerItem.getAbility();
+	}
+
+	private static boolean areHammerAbilitiesEnabled() {
+		return MineHammersConfig.get().enableHammerAbilities;
 	}
 
 	public static void rememberLastMinedFace(ServerPlayer player, Direction face) {

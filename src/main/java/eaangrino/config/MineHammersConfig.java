@@ -66,6 +66,9 @@ public final class MineHammersConfig {
 		int radius = Math.max(0, Math.min(4, loaded.radius));
 		float hungerExhaustionPerExtraBlock = Math.max(0.0F, Math.min(1.0F, loaded.hungerExhaustionPerExtraBlock));
 		String miningShape = MiningShapes.sanitize(loaded.miningShape, radius);
+		boolean enableHammerAbilities = loaded.enableHammerAbilities == null
+				? defaults.enableHammerAbilities
+				: loaded.enableHammerAbilities;
 		boolean shiftScrollShapeSwitchEnabled = loaded.miningShape == null
 				? defaults.shiftScrollShapeSwitchEnabled
 				: loaded.shiftScrollShapeSwitchEnabled;
@@ -73,6 +76,7 @@ public final class MineHammersConfig {
 				loaded.areaMiningEnabled,
 				radius,
 				loaded.disableWhenSneaking,
+				enableHammerAbilities,
 				loaded.onlyPickaxeMineable,
 				loaded.requireCorrectToolForDrops,
 				hungerExhaustionPerExtraBlock,
@@ -96,6 +100,7 @@ public final class MineHammersConfig {
 		public boolean areaMiningEnabled;
 		public int radius; // 1 => 3x3x1
 		public boolean disableWhenSneaking;
+		public Boolean enableHammerAbilities;
 		public boolean onlyPickaxeMineable;
 		public boolean requireCorrectToolForDrops;
 		public float hungerExhaustionPerExtraBlock;
@@ -103,13 +108,14 @@ public final class MineHammersConfig {
 		public boolean shiftScrollShapeSwitchEnabled;
 
 		public ConfigData() {
-			this(true, 1, true, true, true, 0.0125F, MiningShapes.THREE_BY_THREE, true);
+			this(true, 1, true, true, true, true, 0.0125F, MiningShapes.THREE_BY_THREE, true);
 		}
 
 		public ConfigData(
 				boolean areaMiningEnabled,
 				int radius,
 				boolean disableWhenSneaking,
+				boolean enableHammerAbilities,
 				boolean onlyPickaxeMineable,
 				boolean requireCorrectToolForDrops,
 				float hungerExhaustionPerExtraBlock,
@@ -119,6 +125,7 @@ public final class MineHammersConfig {
 			this.areaMiningEnabled = areaMiningEnabled;
 			this.radius = radius;
 			this.disableWhenSneaking = disableWhenSneaking;
+			this.enableHammerAbilities = enableHammerAbilities;
 			this.onlyPickaxeMineable = onlyPickaxeMineable;
 			this.requireCorrectToolForDrops = requireCorrectToolForDrops;
 			this.hungerExhaustionPerExtraBlock = hungerExhaustionPerExtraBlock;

@@ -47,6 +47,7 @@
   "mine-hammers.config.area_mining": "Area Mining: %s",
   "mine-hammers.config.mining_shape": "Mining Shape: %s",
   "mine-hammers.config.disable_when_sneaking": "Disable While Sneaking: %s",
+  "mine-hammers.config.enable_hammer_abilities": "Enable Hammer Abilities: %s",
   "mine-hammers.config.shift_scroll_switch": "Shift + Scroll Changes Shape: %s",
   "mine-hammers.config.shift_scroll_hint": "Tip: hold Shift and scroll while using a hammer to switch shape.",
   "mine-hammers.config.shape.changed": "Mining shape: %s",
