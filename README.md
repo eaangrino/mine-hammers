@@ -28,14 +28,14 @@ All hammers are pickaxe-style tools. Some are simple upgrades, others have uniqu
 | Iron Hammer       | Mid-game workhorse        | Saves durability while mining stone/deepslate over time; area mining avoids chests, barrels, and spawners.                        |
 | Golden Hammer     | -                         | -                                                                                                                                 |
 | Diamond Hammer    | Endgame reliable miner    | 20% chance to avoid durability loss when breaking ores; avoids area-mining collapse blocks (sand/red sand/gravel) on primary hit. |
-| Netherite Hammer  | Ultimate late-game hammer | Fire resistant; gains Haste near lava/fire-like heat sources.                                                                     |
+| Netherite Hammer  | Ultimate late-game hammer | The hammer item is fire resistant (not the player); gains Haste near lava/fire-like heat sources.                                |
 | Obsidian Hammer   | -                         | -                                                                                                                                 |
 | Emerald Hammer    | Treasure hunter           | Breaking stone/deepslate can reveal nearby ores with particles.                                                                   |
 | Lapis Hammer      | -                         | -                                                                                                                                 |
 | Quartz Hammer     | -                         | -                                                                                                                                 |
-| Prismarine Hammer | -                         | -                                                                                                                                 |
+| Prismarine Hammer | Ocean exploration miner   | Mines faster in water/rain and a bit faster deep underwater; reduces underwater area-mining exhaustion; loses less durability on waterlogged/prismarine blocks; can hint at nearby flooded spaces and ocean monuments with subtle particles/sounds. |
 | Slime Hammer      | -                         | -                                                                                                                                 |
-| Magma Hammer      | Hot-zone specialist       | Auto-smelts many mined drops and is fire resistant; overheats if spam-mined too hard (mining slowdown until it cools).            |
+| Magma Hammer      | Hot-zone specialist       | Auto-smelts many mined drops; the hammer item is fire resistant (not the player); overheats if spam-mined too hard (mining slowdown until it cools). |
 | Ender Hammer      | -                         | -                                                                                                                                 |
 
 ## Crafting Notes

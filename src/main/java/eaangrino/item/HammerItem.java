@@ -7,6 +7,7 @@ import eaangrino.item.ability.DiamondHammerAbility;
 import eaangrino.item.ability.IronHammerAbility;
 import eaangrino.item.ability.MagmaHammerAbility;
 import eaangrino.item.ability.NetheriteHammerAbility;
+import eaangrino.item.ability.PrismarineHammerAbility;
 import eaangrino.mining.MiningShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,7 +46,8 @@ public class HammerItem extends DiggerItem {
 			"emerald_hammer", new EmeraldHammerAbility(),
 			"iron_hammer", new IronHammerAbility(),
 			"magma_hammer", new MagmaHammerAbility(),
-			"netherite_hammer", new NetheriteHammerAbility()
+			"netherite_hammer", new NetheriteHammerAbility(),
+			"prismarine_hammer", new PrismarineHammerAbility()
 	);
 	private static final Map<Item, Item> MAGMA_COOK_RESULTS = createMagmaCookResults();
 	private static final Map<Block, Item> MAGMA_BLOCK_COOK_RESULTS = createMagmaBlockCookResults();
@@ -140,6 +142,19 @@ public class HammerItem extends DiggerItem {
 		return itemId == null ? null : ABILITIES.get(itemId.getPath());
 	}
 
+	public static float getModifiedDestroySpeed(ItemStack stack, Level level, LivingEntity entity, BlockState state, float currentSpeed) {
+		HammerAbility ability = getAbility(stack);
+		return ability == null ? currentSpeed : ability.modifyDestroySpeed(stack, level, entity, state, currentSpeed);
+	}
+
+	private static HammerAbility getAbility(ItemStack stack) {
+		if (!(stack.getItem() instanceof HammerItem hammerItem)) {
+			return null;
+		}
+
+		return hammerItem.getAbility();
+	}
+
 	private static Direction.Axis getMiningPlaneAxis(ServerPlayer player) {
 		// Looking mostly up/down mines a horizontal 3x3, otherwise mines a vertical 3x3 in front of the player.
 		if (Math.abs(player.getXRot()) > 45.0F) {
@@ -221,7 +236,10 @@ public class HammerItem extends DiggerItem {
 			}
 
 			if (!player.getAbilities().instabuild) {
-				player.causeFoodExhaustion(config.hungerExhaustionPerExtraBlock);
+				float exhaustionMultiplier = ability == null
+						? 1.0F
+						: ability.getExtraBlockExhaustionMultiplier(stack, (ServerLevel) level, player, targetState, targetPos);
+				player.causeFoodExhaustion(config.hungerExhaustionPerExtraBlock * exhaustionMultiplier);
 			}
 			return true;
 		}
