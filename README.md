@@ -38,10 +38,31 @@ All hammers are pickaxe-style tools. Some are simple upgrades, others have uniqu
 | Magma Hammer      | Hot-zone specialist       | Auto-smelts many mined drops; the hammer item is fire resistant (not the player); overheats if spam-mined too hard (mining slowdown until it cools). |
 | Ender Hammer      | Dimensional explorer      | Can reveal nearby cavities and nearby void edges with portal particles; gently pulls drops toward the player; reduces area-mining exhaustion and slightly lowers knockback near the void; loses less durability on End stone and purpur blocks. |
 
-## Crafting Notes
+## Crafting
 
-- Most hammers use the same shape pattern with a block + material + handle style.
-- Netherite Hammer is upgraded from Diamond Hammer via smithing template + netherite ingot.
+### Basic Hammers
+
+| Wooden Hammer | Stone Hammer | Iron Hammer |
+| --- | --- | --- |
+| ![Wooden Hammer recipe](recipes_preview/wooden.gif) | ![Stone Hammer recipe](recipes_preview/stone.png) | ![Iron Hammer recipe](recipes_preview/iron.png) |
+
+| Golden Hammer | Diamond Hammer | Emerald Hammer |
+| --- | --- | --- |
+| ![Golden Hammer recipe](recipes_preview/gold.png) | ![Diamond Hammer recipe](recipes_preview/diamond.png) | ![Emerald Hammer recipe](recipes_preview/emerald.png) |
+
+| Lapis Hammer | Quartz Hammer | Prismarine Hammer |
+| --- | --- | --- |
+| ![Lapis Hammer recipe](recipes_preview/lapis.png) | ![Quartz Hammer recipe](recipes_preview/quartz.png) | ![Prismarine Hammer recipe](recipes_preview/prismarine.png) |
+
+| Slime Hammer | Obsidian Hammer | Magma Hammer |
+| --- | --- | --- |
+| ![Slime Hammer recipe](recipes_preview/slime.png) | ![Obsidian Hammer recipe](recipes_preview/obsidian.png) | ![Magma Hammer recipe](recipes_preview/magma.png) |
+
+### Late-Game Hammers
+
+| Ender Hammer | Netherite Hammer |
+| --- | --- |
+| ![Ender Hammer recipe](recipes_preview/ender.png) | ![Netherite Hammer recipe](recipes_preview/netherite.png) |
 
 ## Credits
 
