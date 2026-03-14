@@ -39,6 +39,10 @@ public interface HammerAbility {
 		return strength;
 	}
 
+	default float modifyFallDistance(ItemStack stack, Level level, LivingEntity entity, float fallDistance) {
+		return fallDistance;
+	}
+
 	default void onBlockMiningFinished(ItemStack stack, ServerLevel level, ServerPlayer player, BlockPos blockPos, int totalBrokenBlocks) {
 	}
 }

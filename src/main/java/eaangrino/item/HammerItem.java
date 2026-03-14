@@ -10,6 +10,7 @@ import eaangrino.item.ability.MagmaHammerAbility;
 import eaangrino.item.ability.NetheriteHammerAbility;
 import eaangrino.item.ability.PrismarineHammerAbility;
 import eaangrino.item.ability.QuartzHammerAbility;
+import eaangrino.item.ability.SlimeHammerAbility;
 import eaangrino.mining.MiningShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,7 +52,8 @@ public class HammerItem extends DiggerItem {
 			"magma_hammer", new MagmaHammerAbility(),
 			"netherite_hammer", new NetheriteHammerAbility(),
 			"prismarine_hammer", new PrismarineHammerAbility(),
-			"quartz_hammer", new QuartzHammerAbility()
+			"quartz_hammer", new QuartzHammerAbility(),
+			"slime_hammer", new SlimeHammerAbility()
 	);
 	private static final Map<Item, Item> MAGMA_COOK_RESULTS = createMagmaCookResults();
 	private static final Map<Block, Item> MAGMA_BLOCK_COOK_RESULTS = createMagmaBlockCookResults();
@@ -154,6 +156,11 @@ public class HammerItem extends DiggerItem {
 	public static double getModifiedKnockbackReceived(ItemStack stack, Level level, LivingEntity entity, double strength) {
 		HammerAbility ability = getAbility(stack);
 		return ability == null ? strength : ability.modifyKnockbackReceived(stack, level, entity, strength);
+	}
+
+	public static float getModifiedFallDistance(ItemStack stack, Level level, LivingEntity entity, float fallDistance) {
+		HammerAbility ability = getAbility(stack);
+		return ability == null ? fallDistance : ability.modifyFallDistance(stack, level, entity, fallDistance);
 	}
 
 	private static HammerAbility getAbility(ItemStack stack) {

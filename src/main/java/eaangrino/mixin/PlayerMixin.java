@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
@@ -23,5 +24,16 @@ public abstract class PlayerMixin {
 		if (modifiedSpeed != cir.getReturnValueF()) {
 			cir.setReturnValue(modifiedSpeed);
 		}
+	}
+
+	@ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+	private float mineHammers$modifyFallDistance(float fallDistance) {
+		Player player = (Player) (Object) this;
+		ItemStack stack = player.getMainHandItem();
+		if (!(stack.getItem() instanceof HammerItem)) {
+			return fallDistance;
+		}
+
+		return HammerItem.getModifiedFallDistance(stack, player.level(), player, fallDistance);
 	}
 }
