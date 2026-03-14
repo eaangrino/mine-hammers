@@ -36,7 +36,7 @@ All hammers are pickaxe-style tools. Some are simple upgrades, others have uniqu
 | Prismarine Hammer | Ocean exploration miner   | Mines faster in water/rain and a bit faster deep underwater; reduces underwater area-mining exhaustion; loses less durability on waterlogged/prismarine blocks; can hint at nearby flooded spaces and ocean monuments with subtle particles/sounds. |
 | Slime Hammer      | -                         | -                                                                                                                                 |
 | Magma Hammer      | Hot-zone specialist       | Auto-smelts many mined drops; the hammer item is fire resistant (not the player); overheats if spam-mined too hard (mining slowdown until it cools). |
-| Ender Hammer      | -                         | -                                                                                                                                 |
+| Ender Hammer      | Dimensional explorer      | Can reveal nearby cavities and nearby void edges with portal particles; gently pulls drops toward the player; reduces area-mining exhaustion and slightly lowers knockback near the void; loses less durability on End stone and purpur blocks. |
 
 ## Crafting Notes
 

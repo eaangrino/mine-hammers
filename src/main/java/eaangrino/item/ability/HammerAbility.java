@@ -35,6 +35,10 @@ public interface HammerAbility {
 		return 1.0F;
 	}
 
+	default double modifyKnockbackReceived(ItemStack stack, Level level, LivingEntity entity, double strength) {
+		return strength;
+	}
+
 	default void onBlockMiningFinished(ItemStack stack, ServerLevel level, ServerPlayer player, BlockPos blockPos, int totalBrokenBlocks) {
 	}
 }

@@ -2,6 +2,7 @@ package eaangrino.item;
 
 import eaangrino.config.MineHammersConfig;
 import eaangrino.item.ability.EmeraldHammerAbility;
+import eaangrino.item.ability.EnderHammerAbility;
 import eaangrino.item.ability.HammerAbility;
 import eaangrino.item.ability.DiamondHammerAbility;
 import eaangrino.item.ability.IronHammerAbility;
@@ -44,6 +45,7 @@ public class HammerItem extends DiggerItem {
 	private static final Map<String, HammerAbility> ABILITIES = Map.of(
 			"diamond_hammer", new DiamondHammerAbility(),
 			"emerald_hammer", new EmeraldHammerAbility(),
+			"ender_hammer", new EnderHammerAbility(),
 			"iron_hammer", new IronHammerAbility(),
 			"magma_hammer", new MagmaHammerAbility(),
 			"netherite_hammer", new NetheriteHammerAbility(),
@@ -145,6 +147,11 @@ public class HammerItem extends DiggerItem {
 	public static float getModifiedDestroySpeed(ItemStack stack, Level level, LivingEntity entity, BlockState state, float currentSpeed) {
 		HammerAbility ability = getAbility(stack);
 		return ability == null ? currentSpeed : ability.modifyDestroySpeed(stack, level, entity, state, currentSpeed);
+	}
+
+	public static double getModifiedKnockbackReceived(ItemStack stack, Level level, LivingEntity entity, double strength) {
+		HammerAbility ability = getAbility(stack);
+		return ability == null ? strength : ability.modifyKnockbackReceived(stack, level, entity, strength);
 	}
 
 	private static HammerAbility getAbility(ItemStack stack) {
