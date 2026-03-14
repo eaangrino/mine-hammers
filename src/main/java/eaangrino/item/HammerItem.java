@@ -9,6 +9,7 @@ import eaangrino.item.ability.IronHammerAbility;
 import eaangrino.item.ability.MagmaHammerAbility;
 import eaangrino.item.ability.NetheriteHammerAbility;
 import eaangrino.item.ability.PrismarineHammerAbility;
+import eaangrino.item.ability.QuartzHammerAbility;
 import eaangrino.mining.MiningShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,7 +50,8 @@ public class HammerItem extends DiggerItem {
 			"iron_hammer", new IronHammerAbility(),
 			"magma_hammer", new MagmaHammerAbility(),
 			"netherite_hammer", new NetheriteHammerAbility(),
-			"prismarine_hammer", new PrismarineHammerAbility()
+			"prismarine_hammer", new PrismarineHammerAbility(),
+			"quartz_hammer", new QuartzHammerAbility()
 	);
 	private static final Map<Item, Item> MAGMA_COOK_RESULTS = createMagmaCookResults();
 	private static final Map<Block, Item> MAGMA_BLOCK_COOK_RESULTS = createMagmaBlockCookResults();

@@ -32,7 +32,7 @@ All hammers are pickaxe-style tools. Some are simple upgrades, others have uniqu
 | Obsidian Hammer   | -                         | -                                                                                                                                 |
 | Emerald Hammer    | Treasure hunter           | Breaking stone/deepslate can reveal nearby ores with particles.                                                                   |
 | Lapis Hammer      | -                         | -                                                                                                                                 |
-| Quartz Hammer     | -                         | -                                                                                                                                 |
+| Quartz Hammer     | Crystal resonator         | Can hint at nearby ores, quartz, geode-like crystals, and redstone activity with subtle particles; loses less durability on Nether and crystalline blocks; slightly reduces mining exhaustion when working with quartz blocks and ore. |
 | Prismarine Hammer | Ocean exploration miner   | Mines faster in water/rain and a bit faster deep underwater; reduces underwater area-mining exhaustion; loses less durability on waterlogged/prismarine blocks; can hint at nearby flooded spaces and ocean monuments with subtle particles/sounds. |
 | Slime Hammer      | -                         | -                                                                                                                                 |
 | Magma Hammer      | Hot-zone specialist       | Auto-smelts many mined drops; the hammer item is fire resistant (not the player); overheats if spam-mined too hard (mining slowdown until it cools). |
