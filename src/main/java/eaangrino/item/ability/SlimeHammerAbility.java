@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 public final class SlimeHammerAbility implements HammerAbility {
 	private static final String DURABILITY_CREDIT_TAG = "mine_hammers_slime_durability_credit";
 	private static final float SHOCK_ABSORPTION_EXHAUSTION_MULTIPLIER = 0.90F;
-	private static final float STICKY_MINING_DURABILITY_CREDIT = 0.10F;
+	private static final float STICKY_MINING_DURABILITY_CREDIT = 0.25F;
 	private static final float SOFT_LANDING_CHANCE = 0.25F;
 	private static final float SOFT_LANDING_FALL_MULTIPLIER = 0.90F;
 	private static final float STICKY_DROPS_CHANCE = 0.25F;
