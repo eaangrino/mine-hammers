@@ -40,10 +40,13 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HammerItem extends DiggerItem {
 	private static final ThreadLocal<Boolean> AREA_MINING_ACTIVE = ThreadLocal.withInitial(() -> false);
 	private static final String MAGMA_SMELTED_ENTITY_TAG = "mine_hammers_magma_smelted";
+	private static final Map<UUID, Direction> LAST_MINED_FACES = new ConcurrentHashMap<>();
 	private static final Map<String, HammerAbility> ABILITIES = Map.of(
 			"diamond_hammer", new DiamondHammerAbility(),
 			"emerald_hammer", new EmeraldHammerAbility(),
@@ -124,7 +127,7 @@ public class HammerItem extends DiggerItem {
 			return mined;
 		}
 
-		Direction.Axis axis = getMiningPlaneAxis(player);
+		Direction.Axis axis = getMiningPlaneAxis(player, pos);
 		AREA_MINING_ACTIVE.set(true);
 		try {
 			brokenBlocks += breakArea(stack, player, level, pos, axis, config, shouldSmelt, convertedOutputs, ability);
@@ -171,8 +174,17 @@ public class HammerItem extends DiggerItem {
 		return hammerItem.getAbility();
 	}
 
-	private static Direction.Axis getMiningPlaneAxis(ServerPlayer player) {
-		// Looking mostly up/down mines a horizontal 3x3, otherwise mines a vertical 3x3 in front of the player.
+	public static void rememberLastMinedFace(ServerPlayer player, Direction face) {
+		LAST_MINED_FACES.put(player.getUUID(), face);
+	}
+
+	private static Direction.Axis getMiningPlaneAxis(ServerPlayer player, BlockPos origin) {
+		Direction hitFace = LAST_MINED_FACES.remove(player.getUUID());
+		if (hitFace != null) {
+			return hitFace.getAxis();
+		}
+
+		// Fallback for edge cases where no attack callback ran before the block finished breaking.
 		if (Math.abs(player.getXRot()) > 45.0F) {
 			return Direction.Axis.Y;
 		}

@@ -6,6 +6,7 @@ import eaangrino.config.MineHammersConfig;
 import eaangrino.item.HammerItem;
 import eaangrino.item.material.HammerMaterial;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.api.FabricLoader;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -47,9 +49,19 @@ public class MineHammers implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		MineHammersConfig.load();
+		registerBlockAttackTracking();
 		registerHammersFromStaticData();
 		registerCreativeTabEntries();
 		LOGGER.info("Registered {} hammers for {}", HAMMERS.size(), MOD_ID);
+	}
+
+	private static void registerBlockAttackTracking() {
+		AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
+			if (!world.isClientSide() && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer && player.getItemInHand(hand).getItem() instanceof HammerItem) {
+				HammerItem.rememberLastMinedFace(serverPlayer, direction);
+			}
+			return InteractionResult.PASS;
+		});
 	}
 
 	private static void registerHammersFromStaticData() {

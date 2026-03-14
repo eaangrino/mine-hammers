@@ -60,7 +60,7 @@ public final class HammerAreaOutlineRenderer {
 				return true;
 			}
 
-			Direction.Axis axis = getMiningPlaneAxis(player.getXRot(), player.getDirection());
+			Direction.Axis axis = getMiningPlaneAxis(blockHitResult.getDirection());
 			BlockPos origin = blockOutlineContext.blockPos();
 			VertexConsumer vertexConsumer = context.consumers().getBuffer(RenderType.lines());
 			double cameraX = blockOutlineContext.cameraX();
@@ -122,11 +122,7 @@ public final class HammerAreaOutlineRenderer {
 		});
 	}
 
-	private static Direction.Axis getMiningPlaneAxis(float xRot, Direction direction) {
-		if (Math.abs(xRot) > 45.0F) {
-			return Direction.Axis.Y;
-		}
-
-		return direction.getAxis();
+	private static Direction.Axis getMiningPlaneAxis(Direction hitDirection) {
+		return hitDirection.getAxis();
 	}
 }
