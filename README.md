@@ -1,5 +1,7 @@
 # Mine Hammers
 
+Language: **English** | [Espanol](README.es.md)
+
 Mine Hammers is a Fabric mod for **Minecraft** that adds hammer tools focused on faster mining and fun weapon-like feeling.
 
 ## What This Mod Adds
