@@ -17,6 +17,14 @@ Mine Hammers is a Fabric mod for **Minecraft** that adds hammer tools focused on
 - Hold `Shift` while mining to disable area mining temporarily (default behavior).
 - Hold `Shift` + scroll to cycle mining shapes (`3x3`, `3x1 Vertical Tunnel`, `3x1 Horizontal Tunnel`).
 
+## Vanilla-Style Option
+
+If you want to keep the area mining but do not want the special hammer abilities, you can disable them in the mod configuration.
+
+- Set `Enable Hammer Abilities` to `Off` in the config screen.
+- Hammers will continue to work as area-mining tools.
+- Special effects, particles, passive bonuses, and unique hammer abilities will be disabled globally.
+
 ## Hammer List
 
 All hammers are pickaxe-style tools. Some are simple upgrades, others have unique powers.
