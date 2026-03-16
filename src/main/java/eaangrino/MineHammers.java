@@ -8,6 +8,7 @@ import eaangrino.item.material.HammerMaterial;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -95,6 +96,9 @@ public class MineHammers implements ModInitializer {
 			Item item = createHammerItem(definition, itemId);
 			Registry.register(BuiltInRegistries.ITEM, itemId, item);
 			HAMMERS.put(hammerName, item);
+			if (definition.burnTime() > 0) {
+				FuelRegistryEvents.BUILD.register((builder, context) -> builder.add(item, definition.burnTime()));
+			}
 
 		} catch (IOException | JsonParseException | IllegalStateException e) {
 			LOGGER.error("Failed to register hammer from {}", file, e);
