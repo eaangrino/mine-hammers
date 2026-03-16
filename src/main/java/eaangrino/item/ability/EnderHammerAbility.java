@@ -121,7 +121,7 @@ public final class EnderHammerAbility implements HammerAbility {
 		for (Direction direction : Direction.values()) {
 			BlockPos adjacentPos = pos.relative(direction);
 			BlockState adjacentState = level.getBlockState(adjacentPos);
-			if (!adjacentState.isAir() && adjacentState.isSolidRender(level, adjacentPos)) {
+			if (!adjacentState.isAir() && adjacentState.isSolidRender()) {
 				return true;
 			}
 		}
@@ -210,7 +210,7 @@ public final class EnderHammerAbility implements HammerAbility {
 			return false;
 		}
 
-		int minY = Math.max(level.getMinBuildHeight(), pos.getY() - VOID_SCAN_DEPTH);
+		int minY = Math.max(level.getMinY(), pos.getY() - VOID_SCAN_DEPTH);
 		for (int y = pos.getY() - 1; y >= minY; y--) {
 			BlockPos scanPos = new BlockPos(pos.getX(), y, pos.getZ());
 			if (!level.getBlockState(scanPos).isAir()) {

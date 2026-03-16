@@ -8,7 +8,6 @@ import eaangrino.item.material.HammerMaterial;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,7 +20,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,32 +92,33 @@ public class MineHammers implements ModInitializer {
 
 			String hammerName = definition.id() + "_hammer";
 			ResourceLocation itemId = ResourceLocation.fromNamespaceAndPath(MOD_ID, hammerName);
-			Item item = createHammerItem(definition);
+			Item item = createHammerItem(definition, itemId);
 			Registry.register(BuiltInRegistries.ITEM, itemId, item);
 			HAMMERS.put(hammerName, item);
 
-			if (definition.burnTime() > 0) {
-				FuelRegistry.INSTANCE.add(item, definition.burnTime());
-			}
 		} catch (IOException | JsonParseException | IllegalStateException e) {
 			LOGGER.error("Failed to register hammer from {}", file, e);
 		}
 	}
 
-	private static Item createHammerItem(HammerDefinition definition) {
+	private static Item createHammerItem(HammerDefinition definition, ResourceLocation itemId) {
 		TagKey<Block> inverseTag = getIncorrectBlocksTag(definition.miningLevel());
-		Ingredient repairIngredient = ingredientFromItemId(definition.repairIngredient());
+		Item repairItem = itemFromItemId(definition.repairIngredient());
 
-		HammerMaterial material = new HammerMaterial(
+		ToolMaterial material = HammerMaterial.create(
 				inverseTag,
 				definition.durability(),
 				(float) definition.blockBreakSpeed(),
 				(float) definition.attackDamage(),
 				definition.enchantability(),
-				repairIngredient
+				TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MOD_ID, "repair/" + definition.id() + "_hammer"))
 		);
 
-		Item.Properties settings = new Item.Properties().durability(definition.durability());
+		Item.Properties settings = new Item.Properties()
+				.setId(ResourceKey.create(Registries.ITEM, itemId))
+				.durability(definition.durability())
+				.enchantable(definition.enchantability())
+				.repairable(repairItem);
 		if (definition.isFireImmune()) {
 			settings = settings.fireResistant();
 		}
@@ -141,18 +141,18 @@ public class MineHammers implements ModInitializer {
 		);
 	}
 
-	private static Ingredient ingredientFromItemId(String itemId) {
+	private static Item itemFromItemId(String itemId) {
 		ResourceLocation identifier = ResourceLocation.tryParse(itemId);
 		if (identifier == null) {
 			throw new IllegalStateException("Invalid repair ingredient id: " + itemId);
 		}
 
-		Item repairItem = BuiltInRegistries.ITEM.get(identifier);
+		Item repairItem = BuiltInRegistries.ITEM.getValue(identifier);
 		if (repairItem == null || repairItem == Items.AIR) {
 			throw new IllegalStateException("Unknown repair ingredient item: " + itemId);
 		}
 
-		return Ingredient.of(repairItem);
+		return repairItem;
 	}
 
 	private static TagKey<Block> getIncorrectBlocksTag(int miningLevel) {

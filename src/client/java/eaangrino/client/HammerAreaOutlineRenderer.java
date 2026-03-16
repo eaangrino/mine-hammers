@@ -8,12 +8,13 @@ import eaangrino.mining.MiningShapes;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -102,18 +103,20 @@ public final class HammerAreaOutlineRenderer {
 						continue;
 					}
 
-					LevelRenderer.renderVoxelShape(
+					AABB bounds = shape.bounds();
+					ShapeRenderer.renderLineBox(
 							poseStack,
 							vertexConsumer,
-							shape,
-							targetPos.getX() - cameraX,
-							targetPos.getY() - cameraY,
-							targetPos.getZ() - cameraZ,
+							bounds.minX + targetPos.getX() - cameraX,
+							bounds.minY + targetPos.getY() - cameraY,
+							bounds.minZ + targetPos.getZ() - cameraZ,
+							bounds.maxX + targetPos.getX() - cameraX,
+							bounds.maxY + targetPos.getY() - cameraY,
+							bounds.maxZ + targetPos.getZ() - cameraZ,
 							OUTLINE_RED,
 							OUTLINE_GREEN,
 							OUTLINE_BLUE,
-							OUTLINE_ALPHA,
-							false
+							OUTLINE_ALPHA
 					);
 				}
 			}

@@ -30,8 +30,8 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -62,10 +62,12 @@ public class HammerItem extends DiggerItem {
 	private static final Map<Block, Item> MAGMA_BLOCK_COOK_RESULTS = createMagmaBlockCookResults();
 	private final boolean smelts;
 
-	public HammerItem(Tier material, float attackDamage, float attackSpeed, float extraKnockback, boolean smelts, Item.Properties properties) {
+	public HammerItem(ToolMaterial material, float attackDamage, float attackSpeed, float extraKnockback, boolean smelts, Item.Properties properties) {
 		super(
 				material,
 				BlockTags.MINEABLE_WITH_PICKAXE,
+				attackDamage,
+				attackSpeed,
 				properties.attributes(createHammerAttributes(material, attackDamage, attackSpeed, extraKnockback))
 		);
 		this.smelts = smelts;
@@ -512,13 +514,13 @@ public class HammerItem extends DiggerItem {
 		return map;
 	}
 
-	private static ItemAttributeModifiers createHammerAttributes(Tier material, float attackDamage, float attackSpeed, float extraKnockback) {
+	private static ItemAttributeModifiers createHammerAttributes(ToolMaterial material, float attackDamage, float attackSpeed, float extraKnockback) {
 		ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
 		builder.add(
 				Attributes.ATTACK_DAMAGE,
 				new AttributeModifier(
 						ResourceLocation.withDefaultNamespace("base_attack_damage"),
-						attackDamage + material.getAttackDamageBonus(),
+						attackDamage + material.attackDamageBonus(),
 						AttributeModifier.Operation.ADD_VALUE
 				),
 				EquipmentSlotGroup.MAINHAND

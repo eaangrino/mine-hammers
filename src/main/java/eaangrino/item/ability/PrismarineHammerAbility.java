@@ -198,7 +198,7 @@ public final class PrismarineHammerAbility implements HammerAbility {
 		for (Direction direction : Direction.values()) {
 			BlockPos adjacentPos = waterPos.relative(direction);
 			BlockState adjacentState = level.getBlockState(adjacentPos);
-			if (adjacentState.isAir() || !adjacentState.isSolidRender(level, adjacentPos)) {
+			if (adjacentState.isAir() || !adjacentState.isSolidRender()) {
 				return true;
 			}
 		}
