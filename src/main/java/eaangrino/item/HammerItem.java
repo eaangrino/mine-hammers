@@ -25,6 +25,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
@@ -155,7 +157,8 @@ public class HammerItem extends DiggerItem {
 
 	public static float getModifiedDestroySpeed(ItemStack stack, Level level, LivingEntity entity, BlockState state, float currentSpeed) {
 		HammerAbility ability = getAbility(stack);
-		return ability == null ? currentSpeed : ability.modifyDestroySpeed(stack, level, entity, state, currentSpeed);
+		float modifiedSpeed = applyHammerHasteBoost(entity, currentSpeed);
+		return ability == null ? modifiedSpeed : ability.modifyDestroySpeed(stack, level, entity, state, modifiedSpeed);
 	}
 
 	public static double getModifiedKnockbackReceived(ItemStack stack, Level level, LivingEntity entity, double strength) {
@@ -178,6 +181,22 @@ public class HammerItem extends DiggerItem {
 		}
 
 		return hammerItem.getAbility();
+	}
+
+	private static float applyHammerHasteBoost(LivingEntity entity, float currentSpeed) {
+		if (currentSpeed <= 1.0F) {
+			return currentSpeed;
+		}
+
+		MobEffectInstance haste = entity.getEffect(MobEffects.DIG_SPEED);
+		if (haste == null) {
+			return currentSpeed;
+		}
+
+		// Hammers are intentionally slower than vanilla pickaxes, so Haste can feel underwhelming.
+		// Give hammers a modest extra scaling per Haste level to keep the effect noticeable in play.
+		float hammerHasteMultiplier = 1.0F + 0.35F * (haste.getAmplifier() + 1);
+		return currentSpeed * hammerHasteMultiplier;
 	}
 
 	private static boolean areHammerAbilitiesEnabled() {
